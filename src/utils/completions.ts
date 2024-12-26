@@ -1,5 +1,6 @@
 import { CompletionContext, CompletionResult } from "@codemirror/autocomplete";
 import { BaseItem } from "../types/editor";
+import { EditorView } from "@codemirror/view";
 
 export const allItems: BaseItem[] = [
   // Equality and Comparison Functions
@@ -189,7 +190,7 @@ export function createCompletions() {
         info: item.description,
         category: item.category,
         boost: item.value.toLowerCase().startsWith(query) ? 2 : 1,
-        apply: (view, completion, from, to) => {
+        apply: (view: EditorView, completion: { label: string }, from: number, to: number) => {
           const start = from - (before.text.startsWith("{{") ? 2 : 0);
           // If we're between empty braces {{}}, just insert the completion label
           const completionText = before.text === "{{}}" ? completion.label : hasClosingBraces ? `{{${completion.label}` : `{{${completion.label}`;
