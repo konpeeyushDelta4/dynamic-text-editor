@@ -191,12 +191,14 @@ export function createCompletions() {
         boost: item.value.toLowerCase().startsWith(query) ? 2 : 1,
         apply: (view, completion, from, to) => {
           const start = from - (before.text.startsWith("{{") ? 2 : 0);
-          const end = hasClosingBraces ? to + 2 : to;
+          // If we're between empty braces {{}}, just insert the completion label
+          const completionText = before.text === "{{}}" ? completion.label : hasClosingBraces ? `{{${completion.label}` : `{{${completion.label}`;
+
           view.dispatch({
             changes: {
               from: start,
-              to: end,
-              insert: `{{${completion.label}}}`,
+              to: before.to,
+              insert: completionText,
             },
           });
         },

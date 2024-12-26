@@ -83,7 +83,11 @@ const promptLanguage = StreamLanguage.define({
   },
 });
 
-const variableDecoration = Decoration.mark({ class: "cm-variable-wrapper" });
+const variableDecoration = Decoration.mark({
+  class: "cm-variable-wrapper",
+  inclusive: true,
+  selectAll: true,
+});
 
 const variablePlugin = ViewPlugin.fromClass(
   class {
