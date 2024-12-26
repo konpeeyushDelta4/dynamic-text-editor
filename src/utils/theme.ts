@@ -22,7 +22,7 @@ export const promptTheme: Extension = EditorView.theme({
     borderRadius: "4px",
     padding: "2px 0",
     margin: "0 2px",
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#d6ebff",
     border: "1px solid #e2e8f0",
   },
 

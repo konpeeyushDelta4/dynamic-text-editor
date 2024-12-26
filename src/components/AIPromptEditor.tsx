@@ -8,193 +8,127 @@ import { promptTheme } from "../utils/theme";
 
 const EditorWrapper = styled.div`
   .cm-editor {
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    height: 300px;
-    font-family: "Monaco", "Menlo", monospace;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #1e293b;
+    background: #ffffff;
   }
 
+  .cm-editor.cm-focused {
+    outline: none;
+    border-color: #3b82f6;
+  }
+
+  /* Content padding */
   .cm-content {
-    padding: 10px;
+    padding: 16px !important;
   }
 
   .cm-line {
-    padding: 0 4px;
+    padding: 2px 0;
   }
 
-  /* Variables */
-  .cm-variable.Flow,
-  .cm-property.Flow {
-    color: #2563eb !important;
-    background: #dbeafe;
-    padding: 2px 4px;
-    border-radius: 3px;
+  /* Hide line numbers */
+  .cm-gutters {
+    display: none;
   }
 
-  .cm-variable.Session,
-  .cm-property.Session {
-    color: #7c3aed !important;
-    background: #ede9fe;
-    padding: 2px 4px;
-    border-radius: 3px;
+  /* Improve suggestion box styling */
+  .cm-tooltip.cm-tooltip-autocomplete {
+    border: none;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    padding: 4px;
+    max-height: 400px;
+    max-width: 500px;
   }
 
-  .cm-variable.Visitor,
-  .cm-property.Visitor {
-    color: #059669 !important;
-    background: #d1fae5;
-    padding: 2px 4px;
-    border-radius: 3px;
+  .cm-tooltip.cm-tooltip-autocomplete > ul {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+    padding: 4px;
   }
 
-  .cm-variable.Contact,
-  .cm-property.Contact {
-    color: #dc2626 !important;
-    background: #fee2e2;
-    padding: 2px 4px;
-    border-radius: 3px;
-  }
-
-  /* Functions */
-  .cm-function.Equality {
-    color: #0284c7 !important;
-    background: #e0f2fe;
-    padding: 2px 4px;
-    border-radius: 3px;
-  }
-
-  .cm-function.Logical {
-    color: #7c2d12 !important;
-    background: #ffedd5;
-    padding: 2px 4px;
-    border-radius: 3px;
-  }
-
-  .cm-function.String {
-    color: #4338ca !important;
-    background: #e0e7ff;
-    padding: 2px 4px;
-    border-radius: 3px;
-  }
-
-  /* Other syntax elements */
-  .cm-bracket {
-    color: #64748b !important;
-  }
-
-  .cm-parameter {
-    color: #475569 !important;
-    font-style: italic;
-  }
-
-  .cm-string {
-    color: #166534 !important;
-  }
-
-  /* Completion popup styling */
-  .cm-tooltip-autocomplete {
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    max-height: 300px;
-    overflow-y: auto;
-  }
-
-  .cm-tooltip-autocomplete ul li {
+  .cm-tooltip.cm-tooltip-autocomplete > ul > li {
     padding: 8px 12px;
+    border-radius: 6px;
     display: flex;
-    flex-direction: column;
-    gap: 4px;
-    border-bottom: 1px solid #f1f5f9;
+    align-items: center;
+    gap: 8px;
   }
 
-  .cm-tooltip-autocomplete ul li:last-child {
-    border-bottom: none;
+  .cm-tooltip.cm-tooltip-autocomplete > ul > li[aria-selected] {
+    background-color: #f1f5f9;
   }
 
-  .cm-tooltip-autocomplete ul li[aria-selected] {
-    background-color: #f8fafc;
-  }
-
+  /* Style the completion items */
   .cm-completionLabel {
-    color: #1e293b;
+    color: #0f172a;
     font-weight: 500;
   }
 
   .cm-completionDetail {
     color: #64748b;
-    font-size: 0.9em;
+    font-size: 0.875em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: #f8fafc;
   }
 
   .cm-completionInfo {
+    padding: 12px;
     color: #475569;
-    font-size: 0.9em;
-    margin-top: 2px;
+    font-size: 0.875em;
+    border-top: 1px solid #e2e8f0;
+    line-height: 1.6;
   }
 
-  /* Dynamic variable styling */
-  .variableStart,
-  .variableEnd {
-    color: #64748b !important;
+  /* Cursor styling */
+  .cm-cursor {
+    border-left-color: #3b82f6;
   }
 
-  /* Variable wrapper styling */
-  .cm-variable-wrapper {
-    background: #bfdfff;
-    border: 1px solid #e2e8f0;
+  /* Selection styling */
+  .cm-selectionBackground {
+    background: #dbeafe !important;
   }
 
-  /* Variable parts styling */
-  .cm-variable-bracket {
-    color: #64748b !important;
+  .cm-focused .cm-selectionBackground {
+    background: #dbeafe !important;
   }
 
-  /* Variable prefix styling */
-  .cm-variable-prefix.Flow {
-    color: #2563eb !important;
+  /* Scrollbar styling */
+  .cm-scroller::-webkit-scrollbar {
+    width: 12px;
   }
 
-  .cm-variable-prefix.Session {
-    color: #7c3aed !important;
+  .cm-scroller::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 8px;
   }
 
-  .cm-variable-prefix.Visitor {
-    color: #059669 !important;
+  .cm-scroller::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 8px;
+    border: 3px solid #f1f5f9;
   }
 
-  .cm-variable-prefix.Contact {
-    color: #dc2626 !important;
+  .cm-tooltip.cm-tooltip-autocomplete > ul::-webkit-scrollbar {
+    width: 12px;
   }
 
-  /* Variable value styling */
-  .cm-variable-value.Flow {
-    color: #2563eb !important;
-    background: #dbeafe;
-    padding: 2px 4px;
-    border-radius: 3px;
+  .cm-tooltip.cm-tooltip-autocomplete > ul::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 8px;
   }
 
-  /* Function styling */
-  .function.Equality {
-    color: #0284c7 !important;
-    background: #e0f2fe;
-    padding: 2px 4px;
-    border-radius: 3px;
-  }
-
-  .function.Logical {
-    color: #7c2d12 !important;
-    background: #ffedd5;
-    padding: 2px 4px;
-    border-radius: 3px;
-  }
-
-  .function.String {
-    color: #4338ca !important;
-    background: #e0e7ff;
-    padding: 2px 4px;
-    border-radius: 3px;
+  .cm-tooltip.cm-tooltip-autocomplete > ul::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 8px;
+    border: 3px solid #f1f5f9;
   }
 `;
 
@@ -220,7 +154,21 @@ const AIPromptEditor: React.FC<AIPromptEditorProps> = ({ value, onChange }) => {
 
   return (
     <EditorWrapper>
-      <CodeMirror value={value} onChange={onChange} extensions={extensions} theme="light" height="300px" autoFocus={true} />
+      <CodeMirror
+        value={value}
+        onChange={onChange}
+        extensions={extensions}
+        theme="light"
+        height="300px"
+        autoFocus={true}
+        basicSetup={{
+          lineNumbers: false,
+          foldGutter: false,
+          dropCursor: false,
+          allowMultipleSelections: false,
+          indentOnInput: false,
+        }}
+      />
     </EditorWrapper>
   );
 };
