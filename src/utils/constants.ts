@@ -7,18 +7,21 @@ export const allItems: BaseItem[] = [
     description: "Checks if two values are equal",
     type: "function",
     category: "Equality and Comparison",
+    docs: "https://docs.example.com/eq",
   },
   {
     value: "gt a='value1' b='value2'",
     description: "Checks if first value is greater than second",
     type: "function",
     category: "Equality and Comparison",
+    docs: "https://docs.example.com/eq",
   },
   {
     value: "lt a='value1' b='value2'",
     description: "Checks if first value is less than second",
     type: "function",
     category: "Equality and Comparison",
+    docs: "https://docs.example.com/eq",
   },
 
   // Logical Operations
@@ -27,18 +30,21 @@ export const allItems: BaseItem[] = [
     description: "Performs logical AND operation between multiple arguments",
     type: "function",
     category: "Logical Operations",
+    docs: "https://docs.example.com/eq",
   },
   {
     value: "or arg1='value1' arg2='value2'",
     description: "Performs logical OR operation between multiple arguments",
     type: "function",
     category: "Logical Operations",
+    docs: "https://docs.example.com/eq",
   },
   {
     value: "not value='true'",
     description: "Performs logical NOT operation on the value",
     type: "function",
     category: "Logical Operations",
+    docs: "https://docs.example.com/eq",
   },
 
   // String Manipulation
@@ -47,18 +53,21 @@ export const allItems: BaseItem[] = [
     description: "Converts string to uppercase",
     type: "function",
     category: "String Manipulation",
+    docs: "https://docs.example.com/eq",
   },
   {
     value: "lowercase str='HELLO'",
     description: "Converts string to lowercase",
     type: "function",
     category: "String Manipulation",
+    docs: "https://docs.example.com/eq",
   },
   {
     value: "trim str='   Hello   '",
     description: "Removes whitespace from both ends of a string",
     type: "function",
     category: "String Manipulation",
+    docs: "https://docs.example.com/eq",
   },
 
   // Flow Variables

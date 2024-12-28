@@ -85,4 +85,24 @@ export const promptTheme: Extension = EditorView.theme({
   ".cm-string": {
     color: "#166534 !important",
   },
+
+  // Add these new styles for suggestions and completions
+  ".cm-tooltip": {
+    fontSize: "14px",
+  },
+  ".cm-completionLabel": {
+    fontSize: "14px",
+    padding: "2px 4px",
+  },
+  ".cm-tooltip.cm-tooltip-autocomplete": {
+    minWidth: "auto",
+    maxWidth: "400px",
+  },
+  ".cm-tooltip.cm-tooltip-autocomplete > ul": {
+    maxHeight: "200px",
+    minWidth: "200px",
+  },
+  ".cm-tooltip.cm-tooltip-autocomplete > ul > li": {
+    padding: "2px 4px",
+  },
 });

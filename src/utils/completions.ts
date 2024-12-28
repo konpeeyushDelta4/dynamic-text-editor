@@ -30,17 +30,10 @@ export function createCompletions(items: any[]) {
         info: (completion) => {
           const dom = document.createElement("div");
 
-          const copyToClipboard = (text: string) => {
-            navigator.clipboard.writeText(text);
-          };
-
           dom.innerHTML = `
-            <div style="padding: 4px;height: fit-content;">
-              <div style="font-weight: bold">${completion.label}</div>
+            <div style="padding: 4px; height:8px;">
               <div>${item.description || ""}</div>
-              <div>
-                <button style="padding: 4px;background-color: #000;color: #fff;border: none;border-radius: 4px;cursor: pointer;" onclick=${copyToClipboard(completion.label)}>Copy</button>
-              </div>
+              <a href="${item.docs}" target="_blank" rel="noopener noreferrer">Docs</a>
             </div>
           `;
           return dom;

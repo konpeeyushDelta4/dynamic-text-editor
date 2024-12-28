@@ -22,7 +22,11 @@
     "@uiw/react-codemirror": "^4.23.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "styled-components": "^6.1.13"
+    "styled-components": "^6.1.13",
+    "@monaco-editor/react": "^4.6.0",
+    "monaco-editor": "^0.47.0",
+    "draft-js": "^0.11.7",
+    "@types/draft-js": "^0.11.17"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
