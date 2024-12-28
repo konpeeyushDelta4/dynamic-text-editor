@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { styled } from "styled-components";
@@ -5,6 +6,51 @@ import { autocompletion } from "@codemirror/autocomplete";
 import { createCompletions } from "../utils/completions";
 import { promptLanguageSupport } from "../utils/language";
 import { promptTheme } from "../utils/theme";
+
+const allItems: any[] = [];
+
+interface AIPromptEditorProps {
+  value: string;
+  onChange: (value: string) => void;
+}
+
+const AIPromptEditor: React.FC<AIPromptEditorProps> = ({ value, onChange }) => {
+  const extensions = React.useMemo(
+    () => [
+      promptLanguageSupport(),
+      promptTheme,
+      autocompletion({
+        override: [createCompletions(allItems)],
+        defaultKeymap: true,
+        maxRenderedOptions: 50,
+        activateOnTyping: true,
+      }),
+    ],
+    []
+  );
+
+  return (
+    <EditorWrapper>
+      <CodeMirror
+        value={value}
+        onChange={onChange}
+        extensions={extensions}
+        theme="light"
+        height="300px"
+        autoFocus={true}
+        basicSetup={{
+          lineNumbers: false,
+          foldGutter: false,
+          dropCursor: false,
+          allowMultipleSelections: false,
+          indentOnInput: false,
+        }}
+      />
+    </EditorWrapper>
+  );
+};
+
+export default AIPromptEditor;
 
 const EditorWrapper = styled.div`
   .cm-editor {
@@ -131,46 +177,3 @@ const EditorWrapper = styled.div`
     border: 3px solid #f1f5f9;
   }
 `;
-
-interface AIPromptEditorProps {
-  value: string;
-  onChange: (value: string) => void;
-}
-
-const AIPromptEditor: React.FC<AIPromptEditorProps> = ({ value, onChange }) => {
-  const extensions = React.useMemo(
-    () => [
-      promptLanguageSupport(),
-      promptTheme,
-      autocompletion({
-        override: [createCompletions()],
-        defaultKeymap: true,
-        maxRenderedOptions: 50,
-        activateOnTyping: true,
-      }),
-    ],
-    []
-  );
-
-  return (
-    <EditorWrapper>
-      <CodeMirror
-        value={value}
-        onChange={onChange}
-        extensions={extensions}
-        theme="light"
-        height="300px"
-        autoFocus={true}
-        basicSetup={{
-          lineNumbers: false,
-          foldGutter: false,
-          dropCursor: false,
-          allowMultipleSelections: false,
-          indentOnInput: false,
-        }}
-      />
-    </EditorWrapper>
-  );
-};
-
-export default AIPromptEditor;
