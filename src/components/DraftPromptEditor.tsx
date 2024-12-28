@@ -1,12 +1,15 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
 import { Editor, EditorState, CompositeDecorator, Modifier, SelectionState, ContentState, DraftHandleValue, getDefaultKeyBinding } from "draft-js";
 import { styled } from "styled-components";
-import { allItems } from "../utils/constants";
-import { ContentBlockType, FindEntityCallback } from "../types/editor";
+import { BaseEditorItem, ContentBlockType, EditorClassNames, FindEntityCallback } from "../types/editor";
 
 interface DraftPromptEditorProps {
   value: string;
   onChange: (value: string) => void;
+  suggestions: BaseEditorItem[];
+  className?: string;
+  classNames?: EditorClassNames;
+  placeholder?: string;
 }
 
 function findVariableEntities(contentBlock: ContentBlockType, callback: FindEntityCallback) {
@@ -18,27 +21,27 @@ function findVariableEntities(contentBlock: ContentBlockType, callback: FindEnti
   }
 }
 
-const VariableSpan: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  return <span className="variable">{children}</span>;
+const VariableSpan: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => {
+  return <span className={`variable ${className || ""}`}>{children}</span>;
 };
 
-const DraftPromptEditor: React.FC<DraftPromptEditorProps> = ({ value, onChange }) => {
+const DraftPromptEditor: React.FC<DraftPromptEditorProps> = ({ value, onChange, suggestions: options, placeholder, className, classNames }) => {
   const decorator = useMemo(
     () =>
       new CompositeDecorator([
         {
           strategy: findVariableEntities,
-          component: VariableSpan,
+          component: (props) => <VariableSpan {...props} className={classNames?.variable} />,
         },
       ]),
-    []
+    [classNames?.variable]
   );
 
   const [editorState, setEditorState] = useState(() => {
     const contentState = ContentState.createFromText(value);
     return EditorState.createWithContent(contentState, decorator);
   });
-  const [suggestions, setSuggestions] = useState<typeof allItems>([]);
+  const [suggestions, setSuggestions] = useState<typeof options>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestionPosition, setSuggestionPosition] = useState<{
     top: number;
@@ -60,7 +63,20 @@ const DraftPromptEditor: React.FC<DraftPromptEditorProps> = ({ value, onChange }
     }
   }, [value, decorator]);
 
-  const handleBeforeInput = (char: string): DraftHandleValue => {
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (showSuggestions && editorRef.current && suggestionsRef.current && !editorRef.current.editor?.contains(event.target as Node) && !suggestionsRef.current.contains(event.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showSuggestions]);
+
+  const handleBeforeInput = (): DraftHandleValue => {
     const selection = editorState.getSelection();
     if (!selection.isCollapsed()) {
       return "not-handled";
@@ -127,7 +143,7 @@ const DraftPromptEditor: React.FC<DraftPromptEditorProps> = ({ value, onChange }
 
     if (match) {
       const searchText = match[0].replace(/^\{\{/, "").toLowerCase();
-      const filtered = allItems.filter((item) => item.value.toLowerCase().includes(searchText));
+      const filtered = options.filter((item) => item.value.toLowerCase().includes(searchText));
 
       setSuggestions(filtered);
       setSelectedSuggestionIndex(0);
@@ -149,7 +165,7 @@ const DraftPromptEditor: React.FC<DraftPromptEditorProps> = ({ value, onChange }
     onChange(content.getPlainText());
   };
 
-  const handleSuggestionClick = (suggestion: (typeof allItems)[0]) => {
+  const handleSuggestionClick = (suggestion: (typeof options)[0]) => {
     const contentState = editorState.getCurrentContent();
     const selection = editorState.getSelection();
     const block = contentState.getBlockForKey(selection.getStartKey());
@@ -256,7 +272,7 @@ const DraftPromptEditor: React.FC<DraftPromptEditorProps> = ({ value, onChange }
   };
 
   return (
-    <EditorWrapper onClick={() => editorRef.current?.focus()}>
+    <EditorWrapper className={`${className || ""} ${classNames?.root || ""}`} onClick={() => editorRef.current?.focus()}>
       <Editor
         ref={editorRef}
         editorState={editorState}
@@ -265,11 +281,12 @@ const DraftPromptEditor: React.FC<DraftPromptEditorProps> = ({ value, onChange }
         handlePastedText={handlePastedText}
         handleKeyCommand={handleKeyCommand}
         keyBindingFn={keyBindingFn}
-        placeholder="Enter your prompt here..."
+        placeholder={placeholder}
       />
       {showSuggestions && (
         <SuggestionsBox
           ref={suggestionsRef}
+          className={classNames?.suggestions}
           style={{
             top: suggestionPosition.top + 20,
             left: suggestionPosition.left,
@@ -278,13 +295,19 @@ const DraftPromptEditor: React.FC<DraftPromptEditorProps> = ({ value, onChange }
           onClick={(e) => e.stopPropagation()}
         >
           {suggestions.map((suggestion, index) => (
-            <SuggestionItem key={index} onClick={() => handleSuggestionClick(suggestion)} $isSelected={index === selectedSuggestionIndex} onMouseEnter={() => setSelectedSuggestionIndex(index)}>
+            <SuggestionItem
+              key={index}
+              onClick={() => handleSuggestionClick(suggestion)}
+              $isSelected={index === selectedSuggestionIndex}
+              className={`${classNames?.suggestion || ""} ${index === selectedSuggestionIndex ? classNames?.suggestionSelected || "" : ""}`}
+              onMouseEnter={() => setSelectedSuggestionIndex(index)}
+            >
               <SuggestionContent>
                 <SuggestionLabel>
                   <span>{suggestion.value}</span>
-                  <SuggestionCategory>{suggestion.category}</SuggestionCategory>
+                  <SuggestionCategory className={classNames?.category}>{suggestion.category}</SuggestionCategory>
                 </SuggestionLabel>
-                <SuggestionDescription>{suggestion.description}</SuggestionDescription>
+                <SuggestionDescription className={classNames?.description}>{suggestion.description}</SuggestionDescription>
               </SuggestionContent>
               {suggestion.docs && (
                 <DocsLink href={suggestion.docs} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>

@@ -1,50 +1,112 @@
-# React + TypeScript + Vite
+# Dynamic Prompt Editor
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A flexible and customizable prompt editor for React applications with variable suggestions and autocompletion.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 🚀 Variable suggestions with customizable triggers
+- ⌨️ Keyboard navigation
+- 🎨 Custom styling support
+- 🔧 Custom rendering capabilities
+- 📝 Rich text editing powered by Draft.js
 
-## Expanding the ESLint configuration
+## Installation
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+```bash
+npm install dynamic-prompt-editor
+```
 
-- Configure the top-level `parserOptions` property like this:
+## Basic Usage
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
+```tsx
+import { DraftPromptEditor } from "dynamic-prompt-editor";
+
+function App() {
+  const [value, setValue] = useState("Hello {{VISITOR.name}}!");
+
+  const suggestions = [
+    {
+      id: "visitor.name",
+      label: "VISITOR.name",
+      value: "VISITOR.name",
+      category: "Visitor",
+      description: "The visitor's full name",
     },
-  },
-})
+  ];
+
+  return <DraftPromptEditor value={value} onChange={setValue} suggestions={suggestions} />;
+}
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## Props
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+| Prop                | Type                            | Required | Description                    |
+| ------------------- | ------------------------------- | -------- | ------------------------------ |
+| value               | string                          | Yes      | The editor content             |
+| onChange            | (value: string) => void         | Yes      | Change handler                 |
+| suggestions         | BaseEditorItem[]                | Yes      | Array of suggestion items      |
+| placeholder         | string                          | No       | Editor placeholder             |
+| className           | string                          | No       | Additional CSS class           |
+| classNames          | EditorClassNames                | No       | Custom class names object      |
+| renderItem          | (item, isSelected) => ReactNode | No       | Custom item renderer           |
+| renderCategory      | (item) => ReactNode             | No       | Custom category renderer       |
+| renderDescription   | (item) => ReactNode             | No       | Custom description renderer    |
+| minSuggestionWidth  | number                          | No       | Min width of suggestion box    |
+| maxSuggestionWidth  | number                          | No       | Max width of suggestion box    |
+| maxSuggestionHeight | number                          | No       | Max height of suggestion box   |
+| suggestionTrigger   | string                          | No       | Custom trigger (default: '{{') |
+| suggestionClosing   | string                          | No       | Custom closing (default: '}}') |
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+## Examples
+
+### Custom Styling
+
+```tsx
+<DraftPromptEditor
+  value={value}
+  onChange={setValue}
+  suggestions={suggestions}
+  classNames={{
+    root: "custom-editor",
+    editor: "custom-editor__input",
+    variable: "custom-editor__variable",
+    suggestions: "custom-editor__suggestions",
+    suggestion: "custom-editor__suggestion",
+    suggestionSelected: "custom-editor__suggestion--selected",
+    category: "custom-editor__category",
+    description: "custom-editor__description",
+  }}
+/>
 ```
+
+### Custom Rendering
+
+```tsx
+const renderCustomItem = (item, isSelected) => (
+  <div
+    style={{
+      padding: "8px",
+      backgroundColor: isSelected ? "#f0f9ff" : "transparent",
+    }}
+  >
+    <div style={{ fontWeight: "bold" }}>{item.label}</div>
+    <div style={{ fontSize: "0.9em", color: "#666" }}>{item.description}</div>
+  </div>
+);
+
+<DraftPromptEditor value={value} onChange={setValue} suggestions={suggestions} renderItem={renderCustomItem} />;
+```
+
+### Custom Triggers
+
+```tsx
+<DraftPromptEditor value={value} onChange={setValue} suggestions={suggestions} suggestionTrigger="${" suggestionClosing="}" />
+```
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+MIT

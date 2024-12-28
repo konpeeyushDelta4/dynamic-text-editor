@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { styled } from "styled-components";
@@ -5,7 +6,8 @@ import { autocompletion } from "@codemirror/autocomplete";
 import { createCompletions } from "../utils/completions";
 import { promptLanguageSupport } from "../utils/language";
 import { promptTheme } from "../utils/theme";
-import { allItems } from "../utils/constants";
+
+const allItems: any[] = [];
 
 interface AIPromptEditorProps {
   value: string;
