@@ -11,16 +11,17 @@
     "README.md"
   ],
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --config demo/vite.config.ts",
     "build": "tsc -b && vite build",
+    "build:demo": "vite build --config demo/vite.config.ts",
+    "preview": "vite preview --config demo/vite.config.ts",
     "prepare": "npm run build",
     "prepublishOnly": "npm test && npm run lint",
     "version": "npm run format && git add -A src",
     "postversion": "git push && git push --tags",
     "lint": "eslint .",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
-    "test": "echo \"No tests specified\" && exit 0",
-    "preview": "vite preview"
+    "test": "echo \"No tests specified\" && exit 0"
   },
   "peerDependencies": {
     "react": "^18.0.0",
@@ -33,7 +34,8 @@
     "path": "^0.12.7",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "styled-components": "^6.1.13"
+    "styled-components": "^6.1.13",
+    "url": "^0.11.4"
   },
   "devDependencies": {
     "@codemirror/autocomplete": "^6.18.4",

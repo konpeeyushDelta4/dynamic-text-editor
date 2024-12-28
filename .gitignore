@@ -30,3 +30,6 @@ dist
 .env
 
 package-lock.json
+
+# Demo
+dist-demo
