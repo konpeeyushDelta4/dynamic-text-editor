@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import MonacoPromptEditor from "./components/MonacoPromptEditor";
 import AIPromptEditor from "./components/AIPromptEditor";
 import DraftPromptEditor from "./components/DraftPromptEditor";
@@ -16,6 +16,10 @@ function App() {
   return (
     <div className="app-container">
       <h1 className="editor-title">AI Prompt Editor</h1>
+      <section className="editor-section">
+        <h2>DraftJS Version</h2>
+        <DraftPromptEditor value={promptValue} onChange={handlePromptChange} />
+      </section>
 
       <section className="editor-section">
         <h2>Monaco Editor Version</h2>
@@ -25,11 +29,6 @@ function App() {
       <section className="editor-section">
         <h2>CodeMirror Version</h2>
         <AIPromptEditor value={promptValue} onChange={handlePromptChange} />
-      </section>
-
-      <section className="editor-section">
-        <h2>DraftJS Version</h2>
-        <DraftPromptEditor value={promptValue} onChange={handlePromptChange} />
       </section>
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
-import { Editor, EditorState, CompositeDecorator, Modifier, SelectionState, ContentState, DraftHandleValue } from "draft-js";
+import { Editor, EditorState, CompositeDecorator, Modifier, SelectionState, ContentState, DraftHandleValue, getDefaultKeyBinding } from "draft-js";
 import { styled } from "styled-components";
 import { allItems } from "../utils/constants";
 import { ContentBlockType, FindEntityCallback } from "../types/editor";
@@ -40,8 +40,14 @@ const DraftPromptEditor: React.FC<DraftPromptEditorProps> = ({ value, onChange }
   });
   const [suggestions, setSuggestions] = useState<typeof allItems>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [suggestionPosition, setSuggestionPosition] = useState({ top: 0, left: 0 });
+  const [suggestionPosition, setSuggestionPosition] = useState<{
+    top: number;
+    left: number;
+    maxHeight?: number;
+  }>({ top: 0, left: 0 });
   const editorRef = useRef<Editor>(null);
+  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(0);
+  const suggestionsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const currentContent = editorState.getCurrentContent().getPlainText();
@@ -78,6 +84,37 @@ const DraftPromptEditor: React.FC<DraftPromptEditorProps> = ({ value, onChange }
     return "handled";
   };
 
+  const handleKeyCommand = (command: string): DraftHandleValue => {
+    if (showSuggestions) {
+      switch (command) {
+        case "arrow-up":
+          setSelectedSuggestionIndex((prev) => {
+            const newIndex = prev > 0 ? prev - 1 : suggestions.length - 1;
+            scrollSelectedIntoView(newIndex);
+            return newIndex;
+          });
+          return "handled";
+        case "arrow-down":
+          setSelectedSuggestionIndex((prev) => {
+            const newIndex = prev < suggestions.length - 1 ? prev + 1 : 0;
+            scrollSelectedIntoView(newIndex);
+            return newIndex;
+          });
+          return "handled";
+        case "enter":
+          if (suggestions[selectedSuggestionIndex]) {
+            handleSuggestionClick(suggestions[selectedSuggestionIndex]);
+            return "handled";
+          }
+          break;
+        case "escape":
+          setShowSuggestions(false);
+          return "handled";
+      }
+    }
+    return "not-handled";
+  };
+
   const handleEditorChange = (newState: EditorState) => {
     const selection = newState.getSelection();
     const content = newState.getCurrentContent();
@@ -93,16 +130,15 @@ const DraftPromptEditor: React.FC<DraftPromptEditorProps> = ({ value, onChange }
       const filtered = allItems.filter((item) => item.value.toLowerCase().includes(searchText));
 
       setSuggestions(filtered);
+      setSelectedSuggestionIndex(0);
       setShowSuggestions(true);
 
       if (editorRef.current) {
         const editorBounds = editorRef.current.editor?.getBoundingClientRect();
         const caretBounds = getCaretCoordinates();
         if (editorBounds && caretBounds) {
-          setSuggestionPosition({
-            top: caretBounds.top - editorBounds.top + 24,
-            left: caretBounds.left - editorBounds.left,
-          });
+          const position = calculateSuggestionPosition(editorBounds, caretBounds);
+          setSuggestionPosition(position);
         }
       }
     } else {
@@ -145,18 +181,116 @@ const DraftPromptEditor: React.FC<DraftPromptEditorProps> = ({ value, onChange }
     }
   };
 
+  const keyBindingFn = (e: React.KeyboardEvent): string | null => {
+    if (showSuggestions) {
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        return "arrow-up";
+      }
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        return "arrow-down";
+      }
+      if (e.key === "Enter") {
+        e.preventDefault();
+        return "enter";
+      }
+      if (e.key === "Escape") {
+        e.preventDefault();
+        return "escape";
+      }
+    }
+    return getDefaultKeyBinding(e);
+  };
+
+  const scrollSelectedIntoView = (index: number) => {
+    if (suggestionsRef.current) {
+      const suggestionItems = suggestionsRef.current.children;
+      if (suggestionItems[index]) {
+        const item = suggestionItems[index] as HTMLElement;
+        const container = suggestionsRef.current;
+
+        const itemTop = item.offsetTop;
+        const itemBottom = itemTop + item.offsetHeight;
+        const containerTop = container.scrollTop;
+        const containerBottom = containerTop + container.offsetHeight;
+
+        if (itemTop < containerTop) {
+          // Scroll up to show item
+          container.scrollTop = itemTop;
+        } else if (itemBottom > containerBottom) {
+          // Scroll down to show item
+          container.scrollTop = itemBottom - container.offsetHeight;
+        }
+      }
+    }
+  };
+
+  const calculateSuggestionPosition = (editorBounds: DOMRect, caretBounds: { top: number; left: number }) => {
+    const windowHeight = window.innerHeight;
+    const suggestionsHeight = Math.min(suggestions.length * 76, 400);
+    const spaceBelow = windowHeight - caretBounds.top - 24;
+    const spaceAbove = caretBounds.top - editorBounds.top;
+
+    // Calculate left position with bounds checking
+    let left = caretBounds.left - editorBounds.left;
+    const maxLeft = editorBounds.width - 320; // 320px is min-width of suggestions
+    left = Math.min(left, maxLeft);
+    left = Math.max(0, left);
+
+    if (spaceBelow < suggestionsHeight && spaceAbove > suggestionsHeight) {
+      // Show above if more space above and not enough below
+      return {
+        top: caretBounds.top - editorBounds.top - suggestionsHeight - 8,
+        left,
+        maxHeight: Math.min(spaceAbove - 16, 400),
+      };
+    } else {
+      // Show below by default
+      return {
+        top: caretBounds.top - editorBounds.top + 24,
+        left,
+        maxHeight: Math.min(spaceBelow - 16, 400),
+      };
+    }
+  };
+
   return (
-    <EditorWrapper>
-      <Editor ref={editorRef} editorState={editorState} onChange={handleEditorChange} handleBeforeInput={handleBeforeInput} handlePastedText={handlePastedText} placeholder="Enter your prompt here..." />
+    <EditorWrapper onClick={() => editorRef.current?.focus()}>
+      <Editor
+        ref={editorRef}
+        editorState={editorState}
+        onChange={handleEditorChange}
+        handleBeforeInput={handleBeforeInput}
+        handlePastedText={handlePastedText}
+        handleKeyCommand={handleKeyCommand}
+        keyBindingFn={keyBindingFn}
+        placeholder="Enter your prompt here..."
+      />
       {showSuggestions && (
-        <SuggestionsBox style={{ top: suggestionPosition.top, left: suggestionPosition.left }}>
+        <SuggestionsBox
+          ref={suggestionsRef}
+          style={{
+            top: suggestionPosition.top + 20,
+            left: suggestionPosition.left,
+            maxHeight: suggestionPosition.maxHeight,
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
           {suggestions.map((suggestion, index) => (
-            <SuggestionItem key={index} onClick={() => handleSuggestionClick(suggestion)}>
-              <SuggestionLabel>
-                <span>{suggestion.value}</span>
-                <SuggestionCategory>{suggestion.category}</SuggestionCategory>
-              </SuggestionLabel>
-              <SuggestionDescription>{suggestion.description}</SuggestionDescription>
+            <SuggestionItem key={index} onClick={() => handleSuggestionClick(suggestion)} $isSelected={index === selectedSuggestionIndex} onMouseEnter={() => setSelectedSuggestionIndex(index)}>
+              <SuggestionContent>
+                <SuggestionLabel>
+                  <span>{suggestion.value}</span>
+                  <SuggestionCategory>{suggestion.category}</SuggestionCategory>
+                </SuggestionLabel>
+                <SuggestionDescription>{suggestion.description}</SuggestionDescription>
+              </SuggestionContent>
+              {suggestion.docs && (
+                <DocsLink href={suggestion.docs} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
+                  Docs
+                </DocsLink>
+              )}
             </SuggestionItem>
           ))}
         </SuggestionsBox>
@@ -188,6 +322,7 @@ const EditorWrapper = styled.div`
   line-height: 1.6;
   color: #1e293b;
   background: #ffffff;
+  cursor: text;
 
   &:focus-within {
     border-color: #3b82f6;
@@ -198,6 +333,13 @@ const EditorWrapper = styled.div`
     padding: 2px 4px;
     border-radius: 4px;
     color: #2563eb;
+    font-weight: 500;
+  }
+
+  .public-DraftEditorPlaceholder-root {
+    color: #94a3b8;
+    position: absolute;
+    pointer-events: none;
   }
 `;
 
@@ -206,17 +348,35 @@ const SuggestionsBox = styled.div`
   background: white;
   border-radius: 8px;
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  max-height: 400px;
   overflow-y: auto;
   z-index: 1000;
-  min-width: 300px;
+  min-width: 320px;
   max-width: 500px;
+
+  /* Scrollbar styling */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+  }
 `;
 
-const SuggestionItem = styled.div`
+const SuggestionItem = styled.div<{ $isSelected: boolean }>`
   padding: 8px 12px;
   cursor: pointer;
   border-bottom: 1px solid #f1f5f9;
+  background-color: ${(props) => (props.$isSelected ? "#f1f5f9" : "transparent")};
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
 
   &:hover {
     background-color: #f8fafc;
@@ -224,6 +384,24 @@ const SuggestionItem = styled.div`
 
   &:last-child {
     border-bottom: none;
+  }
+`;
+
+const SuggestionContent = styled.div`
+  flex: 1;
+`;
+
+const DocsLink = styled.a`
+  color: #3b82f6;
+  font-size: 0.875em;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  border-radius: 4px;
+
+  &:hover {
+    background-color: #dbeafe;
   }
 `;
 
