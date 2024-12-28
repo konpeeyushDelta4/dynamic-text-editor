@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Completion, CompletionContext, CompletionResult } from "@codemirror/autocomplete";
 import { EditorView } from "@codemirror/view";
 
@@ -9,7 +10,6 @@ export function createCompletions(items: any[]) {
     if (!before) return null;
 
     // Check if we're between braces
-    const isBetweenBraces = before.text.startsWith("{{") && !before.text.endsWith("}}");
     const hasClosingBraces = before.text.endsWith("}}");
 
     // Only show suggestions after {{ is typed
@@ -27,7 +27,7 @@ export function createCompletions(items: any[]) {
         type: item.type as "variable" | "function",
         detail: item.category,
 
-        info: (completion) => {
+        info: () => {
           const dom = document.createElement("div");
 
           dom.innerHTML = `
