@@ -40,6 +40,7 @@ const MonacoPromptEditor: React.FC<MonacoPromptEditorProps> = ({ value, onChange
 
     // Enhanced completion provider
     monaco.languages.registerCompletionItemProvider("promptLanguage", {
+      //@ts-ignore
       provideCompletionItems: (model: IEditorModel, position: IPosition) => {
         const textUntilPosition = model.getValueInRange({
           startLineNumber: position.lineNumber,
@@ -140,7 +141,7 @@ ${item.docs ? `[View Documentation](${item.docs})` : ""}
             showStatusBar: true,
             preview: true,
             previewMode: "prefix",
-            maxVisibleSuggestions: 12,
+            // maxVisibleSuggestions: 12,
             insertMode: "insert",
             snippetsPreventQuickSuggestions: false,
             showInlineDetails: true,
