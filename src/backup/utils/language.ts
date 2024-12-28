@@ -65,6 +65,7 @@ const promptLanguage = StreamLanguage.define({
       }
 
       // Match parameters
+      // eslint-disable-next-line no-useless-escape
       if (stream.match(/[\w_]+=(?=\')/)) {
         return "parameter";
       }

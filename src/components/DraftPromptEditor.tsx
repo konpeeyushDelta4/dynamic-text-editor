@@ -61,6 +61,7 @@ const DraftPromptEditor: React.FC<DraftPromptEditorProps> = ({ value, onChange, 
       const stateWithSelection = EditorState.forceSelection(newEditorState, selection);
       setEditorState(stateWithSelection);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, decorator]);
 
   useEffect(() => {
@@ -305,7 +306,13 @@ const DraftPromptEditor: React.FC<DraftPromptEditorProps> = ({ value, onChange, 
               <SuggestionContent>
                 <SuggestionLabel>
                   <span>{suggestion.value}</span>
-                  <SuggestionCategory className={classNames?.category}>{suggestion.category}</SuggestionCategory>
+                  {suggestion.link ? (
+                    <CategoryLink href={suggestion.link} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
+                      {suggestion.category}
+                    </CategoryLink>
+                  ) : (
+                    <SuggestionCategory className={classNames?.category}>{suggestion.category}</SuggestionCategory>
+                  )}
                 </SuggestionLabel>
                 <SuggestionDescription className={classNames?.description}>{suggestion.description}</SuggestionDescription>
               </SuggestionContent>
@@ -446,6 +453,24 @@ const SuggestionCategory = styled.span`
   background: #f8fafc;
   padding: 2px 8px;
   border-radius: 4px;
+`;
+
+const CategoryLink = styled(SuggestionCategory).attrs({ as: "a" })`
+  color: #3b82f6;
+  text-decoration: underline;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+
+  svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  &:hover {
+    background: #f8fafc;
+  }
 `;
 
 const SuggestionDescription = styled.div`

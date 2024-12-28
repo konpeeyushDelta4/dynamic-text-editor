@@ -2,6 +2,8 @@
 
 A flexible and customizable prompt editor for React applications with variable suggestions and autocompletion.
 
+🔗 [Live Demo](https://dynamic-prompt-editor.vercel.app)
+
 ## Features
 
 - 🚀 Variable suggestions with customizable triggers
