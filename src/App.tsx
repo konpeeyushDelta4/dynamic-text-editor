@@ -30,30 +30,6 @@ function App() {
         <h2>Basic Usage</h2>
         <DraftPromptEditor value={promptValue} onChange={setPromptValue} suggestions={exampleSuggestions} />
       </section>
-
-      <section className="editor-section">
-        <h2>Custom Styling</h2>
-        <DraftPromptEditor
-          value={promptValue}
-          onChange={setPromptValue}
-          suggestions={exampleSuggestions}
-          className="custom-editor"
-          classNames={{
-            root: "custom-editor",
-            variable: "custom-editor__variable",
-            suggestions: "custom-editor__suggestions",
-            suggestion: "custom-editor__suggestion",
-            suggestionSelected: "custom-editor__suggestion--selected",
-            category: "custom-editor__category",
-            description: "custom-editor__description",
-          }}
-        />
-      </section>
-
-      <section className="editor-section">
-        <h2>Custom Rendering</h2>
-        <DraftPromptEditor value={promptValue} onChange={setPromptValue} suggestions={exampleSuggestions} />
-      </section>
     </div>
   );
 }
