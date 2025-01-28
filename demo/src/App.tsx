@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { DraftPromptEditor } from "../../src";
 import { defaultSuggestions } from "../../src/utils/constants";
-import "../../src/App.css";
+import "./App.css";
 
 function App() {
   const [promptValue, setPromptValue] = useState<string>("Hello {{VISITOR.name}}, welcome to {{CONTACT.company}}!");

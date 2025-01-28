@@ -8,7 +8,7 @@ interface DraftPromptEditorProps {
   onChange: (value: string) => void;
   suggestions: BaseEditorItem[];
   className?: string;
-  classNames?: EditorClassNames;
+  classNames?: Partial<EditorClassNames>;
   placeholder?: string;
 }
 
@@ -183,12 +183,12 @@ const DraftPromptEditor: React.FC<DraftPromptEditorProps> = ({ value, onChange, 
         focusOffset: cursorPosition,
       });
 
-      const newContent = Modifier.replaceText(contentState, newSelection, `{{${suggestion.value}}}`);
+      const newContent = Modifier.replaceText(contentState, newSelection, ` {{${suggestion.value}}} `);
 
       const newState = EditorState.push(editorState, newContent, "insert-characters");
       const afterInsertSelection = newSelection.merge({
-        anchorOffset: start + suggestion.value.length + 4,
-        focusOffset: start + suggestion.value.length + 4,
+        anchorOffset: start + suggestion.value.length + 6,
+        focusOffset: start + suggestion.value.length + 6,
       });
       const stateWithSelection = EditorState.forceSelection(newState, afterInsertSelection);
 

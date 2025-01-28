@@ -11,7 +11,7 @@
     "README.md"
   ],
   "scripts": {
-    "dev": "vite --config demo/vite.config.ts",
+    "dev": "vite --config demo/vite.config.ts --port 3004",
     "build": "tsc -b && vite build",
     "build:demo": "vite build --config demo/vite.config.ts",
     "preview": "vite preview --config demo/vite.config.ts",
