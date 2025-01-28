@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useRef, useState, useMemo, forwardRef, useImperativeHandle } from "react";
 import { Editor, EditorState, CompositeDecorator, Modifier, SelectionState, ContentState, DraftHandleValue, getDefaultKeyBinding } from "draft-js";
 import { styled } from "styled-components";
 import { BaseEditorItem, ContentBlockType, EditorClassNames, FindEntityCallback } from "../types/editor";
@@ -10,6 +10,11 @@ interface DraftPromptEditorProps {
   className?: string;
   classNames?: Partial<EditorClassNames>;
   placeholder?: string;
+}
+
+export interface DraftPromptEditorRef {
+  focus: () => void;
+  getEditor: () => Editor | null;
 }
 
 function findVariableEntities(contentBlock: ContentBlockType, callback: FindEntityCallback) {
@@ -25,7 +30,7 @@ const VariableSpan: React.FC<{ children: React.ReactNode; className?: string }> 
   return <span className={`variable ${className || ""}`}>{children}</span>;
 };
 
-const DraftPromptEditor: React.FC<DraftPromptEditorProps> = ({ value, onChange, suggestions: options, placeholder, className, classNames }) => {
+const DraftPromptEditor = forwardRef<DraftPromptEditorRef, DraftPromptEditorProps>(({ value, onChange, suggestions: options, placeholder, className, classNames }, ref) => {
   const decorator = useMemo(
     () =>
       new CompositeDecorator([
@@ -51,6 +56,17 @@ const DraftPromptEditor: React.FC<DraftPromptEditorProps> = ({ value, onChange, 
   const editorRef = useRef<Editor>(null);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(0);
   const suggestionsRef = useRef<HTMLDivElement>(null);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      focus: () => {
+        editorRef.current?.focus();
+      },
+      getEditor: () => editorRef.current,
+    }),
+    []
+  );
 
   useEffect(() => {
     const currentContent = editorState.getCurrentContent().getPlainText();
@@ -327,7 +343,7 @@ const DraftPromptEditor: React.FC<DraftPromptEditorProps> = ({ value, onChange, 
       )}
     </EditorWrapper>
   );
-};
+});
 
 function getCaretCoordinates(): { top: number; left: number } | null {
   const selection = window.getSelection();
