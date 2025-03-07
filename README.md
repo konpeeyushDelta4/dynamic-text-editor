@@ -4,6 +4,10 @@ A modern, flexible rich text editor for React applications, built on top of Quil
 
 
 
+
+https://github.com/user-attachments/assets/6a123004-ae15-43fd-893a-83759437b08b
+
+
 ## Features
 
 - 🎨 Two beautiful themes (Snow & Bubble)
