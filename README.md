@@ -1,173 +1,175 @@
 # Dynamic Text Editor
 
-A modern, flexible rich text editor built on top of Quill.js with React. This package provides two main ways to integrate the editor: a React Hook (`useDynamicTextEditor`) and a Component (`<DynamicTextEditor/>`).
+A modern, flexible rich text editor for React applications, built on top of Quill.js. Provides both hook and component APIs for maximum flexibility.
 
-## Installation
+
+
+## Features
+
+- 🎨 Two beautiful themes (Snow & Bubble)
+- 🌓 First-class dark mode support
+- 🛠 Fully customizable toolbar
+- 📱 Responsive & mobile-friendly
+- 🎯 Written in TypeScript
+- ⚡️ Lightweight & performant
+- 🔄 Real-time content updates
+- 🎮 Controlled & uncontrolled modes
+- 📦 Zero configuration needed
+
+## Quick Start
+
+1. Install the package:
 
 ```bash
 npm install dynamic-text-editor quill
 # or
 yarn add dynamic-text-editor quill
+# or
+pnpm add dynamic-text-editor quill
 ```
 
-Make sure to include the required Quill.js CSS files in your project:
+2. Import the styles:
 
 ```typescript
 import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
 ```
 
-## Features
+3. Use it in your app:
 
-- 🎨 Two themes: Snow and Bubble
-- 🌓 Dark mode support
-- 🛠 Customizable toolbar
-- 📱 Responsive design
-- 🎯 TypeScript support
-- 🔄 Real-time content updates
+```typescript
+import { DynamicTextEditor } from "dynamic-text-editor";
 
-## Usage
+function App() {
+  return <DynamicTextEditor theme="snow" placeholder="Start typing..." onChange={(value) => console.log(value)} />;
+}
+```
 
-### 1. Hook Usage (`useDynamicTextEditor`)
+## Component API
 
-The hook approach provides more flexibility and control over the editor's container.
+The package provides two ways to use the editor: as a component or as a hook.
+
+### `<DynamicTextEditor />` Component
+
+The component API provides a ready-to-use editor with all the bells and whistles.
+
+```typescript
+import { DynamicTextEditor } from "dynamic-text-editor";
+
+function MyEditor() {
+  return <DynamicTextEditor theme="snow" value="Initial content" onChange={(value) => console.log(value)} placeholder="Start typing..." readOnly={false} toolbar={[["bold", "italic"]]} />;
+}
+```
+
+#### Props
+
+| Prop                 | Type                      | Default         | Description                           |
+| -------------------- | ------------------------- | --------------- | ------------------------------------- |
+| `theme`              | `"snow"` \| `"bubble"`    | `"snow"`        | Editor theme                          |
+| `value`              | `string`                  | `""`            | Editor content in HTML format         |
+| `defaultValue`       | `string`                  | `""`            | Initial content (uncontrolled mode)   |
+| `onChange`           | `(value: string) => void` | -               | Called when content changes           |
+| `placeholder`        | `string`                  | `""`            | Placeholder text when editor is empty |
+| `readOnly`           | `boolean`                 | `false`         | Makes the editor read-only            |
+| `toolbar`            | `ToolbarConfig[]`         | Default toolbar | Customizes the toolbar options        |
+| `className`          | `string`                  | `""`            | Class name for the editor wrapper     |
+| `containerClassName` | `string`                  | `""`            | Class name for the container          |
+| `onFocus`            | `() => void`              | -               | Called when editor gains focus        |
+| `onBlur`             | `() => void`              | -               | Called when editor loses focus        |
+
+### Hook API (`useDynamicTextEditor`)
+
+The hook API provides more flexibility and control over the editor instance.
 
 ```typescript
 import { useDynamicTextEditor } from "dynamic-text-editor";
 
-const MyEditor = () => {
-  const { quillRef } = useDynamicTextEditor({
-    theme: "snow", // or "bubble"
-    toolbar: [["bold", "italic"]], // Customize toolbar options
-    placeholder: "Start typing...",
+function MyEditor() {
+  const { quillRef, getValue, setValue } = useDynamicTextEditor({
+    theme: "snow",
     onChange: (value) => console.log(value),
-    onFocus: () => console.log("Editor focused"),
-    onBlur: () => console.log("Editor blurred"),
   });
 
-  return <div ref={quillRef} className="min-h-[200px]" />;
-};
-```
-
-#### Hook Props
-
-| Prop        | Type                    | Default | Description            |
-| ----------- | ----------------------- | ------- | ---------------------- |
-| theme       | "snow" \| "bubble"      | "snow"  | Editor theme           |
-| toolbar     | ToolbarConfig[]         | -       | Toolbar configuration  |
-| placeholder | string                  | -       | Placeholder text       |
-| onChange    | (value: string) => void | -       | Content change handler |
-| onFocus     | () => void              | -       | Focus event handler    |
-| onBlur      | () => void              | -       | Blur event handler     |
-
-### 2. Component Usage (`<DynamicTextEditor/>`)
-
-The component approach provides a more straightforward integration with additional styling options.
-
-```typescript
-import { DynamicTextEditor } from "dynamic-text-editor";
-import type { DynamicTextEditorRef } from "dynamic-text-editor";
-
-const MyEditor = () => {
-  const editorRef = useRef<DynamicTextEditorRef>(null);
-
   return (
-    <DynamicTextEditor
-      ref={editorRef}
-      theme="snow"
-      toolbar={[["bold", "italic"]]}
-      placeholder="Start typing..."
-      onChange={(value) => console.log(value)}
-      className="transition-all duration-200"
-      containerClassName="min-h-[200px] rounded-lg"
-    />
+    <>
+      <div ref={quillRef} />
+      <button onClick={() => console.log(getValue())}>Get Content</button>
+    </>
   );
-};
-```
-
-#### Component Props
-
-| Prop               | Type                    | Default | Description            |
-| ------------------ | ----------------------- | ------- | ---------------------- |
-| theme              | "snow" \| "bubble"      | "snow"  | Editor theme           |
-| toolbar            | ToolbarConfig[]         | -       | Toolbar configuration  |
-| placeholder        | string                  | -       | Placeholder text       |
-| onChange           | (value: string) => void | -       | Content change handler |
-| onFocus            | () => void              | -       | Focus event handler    |
-| onBlur             | () => void              | -       | Blur event handler     |
-| className          | string                  | -       | Editor class name      |
-| containerClassName | string                  | -       | Container class name   |
-
-## Toolbar Configuration
-
-You can customize the toolbar by passing an array of options. Here's an example of a full-featured toolbar:
-
-```typescript
-const toolbar = [
-  [{ header: [1, 2, 3, 4, 5, 6, false] }],
-  ["bold", "italic", "underline", "strike"],
-  [{ color: [] }, { background: [] }],
-  [{ list: "ordered" }, { list: "bullet" }],
-  [{ align: [] }],
-  ["link", "image"],
-  ["clean"],
-];
-```
-
-## Local Development
-
-1. Clone the repository:
-
-```bash
-git clone <repository-url>
-cd dynamic-text-editor-test
-```
-
-2. Install dependencies:
-
-```bash
-npm install
-```
-
-3. Update your package.json:
-
-```json
-{
-  "dependencies": {
-    "dynamic-text-editor": "^1.0.0", 
-    "quill": "^1.3.7",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  },
-  "devDependencies": {
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
-    "typescript": "^5.0.0",
-    "vite": "^4.0.0"
-  },
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
-  }
 }
 ```
 
-4. Run the development server:
+#### Hook Options
 
-```bash
-npm run dev
+| Option         | Type                      | Default         | Description                  |
+| -------------- | ------------------------- | --------------- | ---------------------------- |
+| `theme`        | `"snow"` \| `"bubble"`    | `"snow"`        | Editor theme                 |
+| `onChange`     | `(value: string) => void` | -               | Content change handler       |
+| `value`        | `string`                  | `""`            | Controlled value             |
+| `defaultValue` | `string`                  | `""`            | Initial value (uncontrolled) |
+| `placeholder`  | `string`                  | `""`            | Placeholder text             |
+| `toolbar`      | `ToolbarConfig[]`         | Default toolbar | Toolbar configuration        |
+| `onFocus`      | `() => void`              | -               | Focus handler                |
+| `onBlur`       | `() => void`              | -               | Blur handler                 |
+
+#### Return Value
+
+| Property   | Type                      | Description                     |
+| ---------- | ------------------------- | ------------------------------- |
+| `quillRef` | `RefObject`               | Ref to attach to your container |
+| `getValue` | `() => string`            | Get current editor content      |
+| `setValue` | `(value: string) => void` | Set editor content              |
+| `clear`    | `() => void`              | Clear editor content            |
+| `focus`    | `() => void`              | Focus the editor                |
+| `blur`     | `() => void`              | Blur the editor                 |
+
+## Toolbar Configuration
+
+The toolbar can be customized using the `toolbar` prop. Here are all available options:
+
+```typescript
+const FULL_TOOLBAR = [
+  [{ header: [1, 2, 3, 4, 5, 6, false] }],
+  ["bold", "italic", "underline", "strike"],
+  [{ color: [] }, { background: [] }],
+  [{ script: "sub" }, { script: "super" }],
+  [{ list: "ordered" }, { list: "bullet" }],
+  [{ indent: "-1" }, { indent: "+1" }],
+  [{ direction: "rtl" }],
+  [{ align: [] }],
+  ["link", "image", "video"],
+  ["clean"],
+];
+
+// Usage
+<DynamicTextEditor toolbar={FULL_TOOLBAR} />;
 ```
 
-5. Build for production:
+### Common Toolbar Configurations
 
-```bash
-npm run build
+1. **Basic Text Formatting**
+
+```typescript
+const basicToolbar = [["bold", "italic", "underline"]];
+```
+
+2. **Rich Text Features**
+
+```typescript
+const richToolbar = [["bold", "italic"], [{ header: [1, 2, false] }], ["link", "image"]];
+```
+
+3. **Content Organization**
+
+```typescript
+const organizationToolbar = [[{ header: [1, 2, 3, false] }], [{ list: "ordered" }, { list: "bullet" }], [{ align: [] }]];
 ```
 
 ## Styling
 
-The editor supports both themes (Snow and Bubble) and can be customized using Tailwind CSS or regular CSS. Here's an example of custom styling:
+### Theme-based Styling
+
+The editor supports both Snow and Bubble themes with dark mode:
 
 ```typescript
 // Snow theme with dark mode
@@ -194,4 +196,92 @@ The editor supports both themes (Snow and Bubble) and can be customized using Ta
   `}
 />
 ```
+
+### Custom CSS Variables
+
+You can customize the editor's appearance using CSS variables:
+
+```css
+.dynamic-text-editor {
+  --dte-primary-color: #007aff;
+  --dte-border-radius: 8px;
+  --dte-toolbar-bg: #f8f9fa;
+  --dte-editor-bg: #ffffff;
+  --dte-text-color: #2c3e50;
+  --dte-placeholder-color: #a0aec0;
+}
+```
+
+## Examples
+
+### 1. Basic Usage
+
+```typescript
+function BasicEditor() {
+  return <DynamicTextEditor theme="snow" placeholder="Start typing..." onChange={(value) => console.log(value)} />;
+}
+```
+
+### 2. Controlled Editor
+
+```typescript
+function ControlledEditor() {
+  const [content, setContent] = useState("");
+
+  return <DynamicTextEditor value={content} onChange={setContent} theme="snow" />;
+}
+```
+
+### 3. Custom Toolbar with Hook
+
+```typescript
+function CustomEditor() {
+  const { quillRef } = useDynamicTextEditor({
+    theme: "snow",
+    toolbar: [["bold", "italic"], [{ header: [1, 2, false] }]],
+    onChange: (value) => console.log(value),
+  });
+
+  return <div ref={quillRef} className="min-h-[200px]" />;
+}
+```
+
+### 4. Read-only Mode
+
+```typescript
+function ReadOnlyEditor() {
+  return <DynamicTextEditor readOnly value="<p>This content cannot be edited</p>" theme="bubble" />;
+}
+```
+
+## TypeScript Support
+
+The package includes comprehensive TypeScript definitions. Here are some common types:
+
+```typescript
+type Theme = "snow" | "bubble";
+
+interface ToolbarConfig {
+  header?: (1 | 2 | 3 | 4 | 5 | 6 | false)[];
+  bold?: boolean;
+  italic?: boolean;
+  // ... other toolbar options
+}
+
+interface DynamicTextEditorProps {
+  theme?: Theme;
+  value?: string;
+  onChange?: (value: string) => void;
+  // ... other props
+}
+```
+
+## Browser Support
+
+- Chrome (latest)
+- Firefox (latest)
+- Safari (latest)
+- Edge (latest)
+- IE 11 (with polyfills)
+
 
