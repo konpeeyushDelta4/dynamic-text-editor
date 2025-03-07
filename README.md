@@ -145,8 +145,8 @@ The production-ready files will be available in the `dist` directory.
 ├── src/                    # Source code for the library
 │   ├── components/         # React components
 │   ├── hooks/              # Custom React hooks
-│   └── utils/              # Utility functions
-├── tests/                  # Test files
+|   |---index               # 
+│   └── styles/             # Basic CSS for default Editors
 ├── dist/                   # Built files (after running build)
 |
 ├── example/                # Test application
