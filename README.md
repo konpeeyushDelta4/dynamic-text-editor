@@ -2,11 +2,7 @@
 
 A modern, flexible rich text editor for React applications, built on top of Quill.js. Provides both hook and component APIs for maximum flexibility.
 
-
-
-
 https://github.com/user-attachments/assets/6a123004-ae15-43fd-893a-83759437b08b
-
 
 ## Features
 
@@ -47,6 +43,121 @@ import { DynamicTextEditor } from "dynamic-text-editor";
 function App() {
   return <DynamicTextEditor theme="snow" placeholder="Start typing..." onChange={(value) => console.log(value)} />;
 }
+```
+
+## Local Development
+
+Follow these steps to set up the project locally for development or testing:
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/konpeeyushDelta4/dynamic-text-editor.git
+cd dynamic-text-editor
+```
+
+### 2. Set up the main library
+
+```bash
+# Install dependencies in the root directory
+npm install
+# or
+yarn install
+# or
+pnpm install
+
+# Build the library
+npm run build
+# or
+yarn build
+# or
+pnpm build
+```
+
+### 3. Set up and run the test project
+
+```bash
+# Navigate to the test project
+cd Dynamic-Text-Editor-Test
+
+# Install dependencies
+npm install
+# or
+yarn install
+# or
+pnpm install
+
+# Start the development server
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+```
+
+Your test application should now be running at [http://localhost:5173](http://localhost:5173)
+
+### 4. Running tests
+
+```bash
+# In the main library directory
+npm test
+# or
+yarn test
+# or
+pnpm test
+
+# In the test project directory
+cd Dynamic-Text-Editor-Test
+npm test
+# or
+yarn test
+# or
+pnpm test
+```
+
+### 5. Building for production
+
+```bash
+# Build the main library for production
+npm run build
+# or
+yarn build
+# or
+pnpm build
+
+# Build the test project for production
+cd Dynamic-Text-Editor-Test
+npm run build
+# or
+yarn build
+# or
+pnpm build
+```
+
+The production-ready files will be available in the `dist` directory.
+
+### Project Structure
+
+```
+.
+├── package.json            # Main package configuration
+├── src/                    # Source code for the library
+│   ├── components/         # React components
+│   ├── hooks/              # Custom React hooks
+│   └── utils/              # Utility functions
+├── tests/                  # Test files
+├── dist/                   # Built files (after running build)
+├── Dynamic-Text-Editor-Test/ # Test application
+│   ├── package.json        # Test app configuration
+│   ├── src/                # Test app source code
+│   │   ├── components/     # Test app components
+│   │   │   └── use-case/   # Component and Hook usage examples
+│   │   ├── App.tsx         # Main application component
+│   │   └── main.tsx        # Entry point
+│   ├── public/             # Static assets
+│   └── dist/               # Built files for test app
+└── README.md               # This file
 ```
 
 ## Component API
@@ -287,5 +398,3 @@ interface DynamicTextEditorProps {
 - Safari (latest)
 - Edge (latest)
 - IE 11 (with polyfills)
-
-
