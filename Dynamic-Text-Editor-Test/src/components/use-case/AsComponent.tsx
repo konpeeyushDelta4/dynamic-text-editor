@@ -4,10 +4,7 @@ import { useRef, useState } from "react";
 import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
 
-const toolbar = [
-  ["bold", "italic"]
-]
-
+const toolbar = [["bold", "italic"]];
 const AsComponent = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [theme, setTheme] = useState<"snow" | "bubble">("snow");
@@ -43,13 +40,17 @@ const AsComponent = () => {
         toolbar={toolbar}
         placeholder="Start typing..."
         onChange={(value) => setContent(value)}
-        onFocus={() => console.log("Editor focused")}
-        onBlur={() => console.log("Editor blurred")}
+        onFocus={() => console.log("Component Editor focused")}
+        onBlur={() => console.log("Component Editor blurred")}
         className="transition-all duration-200"
         containerClassName={`min-h-[200px] rounded-lg ${
-          isDarkMode
-            ? "border-gray-600 [&_.ql-toolbar]:!bg-[#2c2d31] [&_.ql-toolbar]:!border-gray-600 [&_.ql-container]:!border-gray-600 [&_.ql-editor]:!text-gray-200 [&_.ql-editor]:!bg-[#25262b]"
-            : "border-gray-200 [&_.ql-toolbar]:!bg-gray-50 [&_.ql-container]:!bg-white"
+          theme === "snow"
+            ? isDarkMode
+              ? "border-gray-600 [&_.ql-toolbar]:!bg-[#2c2d31] [&_.ql-toolbar]:!border-gray-600 [&_.ql-container]:!border-gray-600 [&_.ql-editor]:!text-gray-200 [&_.ql-editor]:!bg-[#25262b]"
+              : "border-gray-200 [&_.ql-toolbar]:!bg-gray-50 [&_.ql-container]:!bg-white"
+            : isDarkMode
+            ? "[&_.ql-editor]:!border-gray-600 [&_.ql-editor]:!bg-[#25262b] [&_.ql-editor]:!text-gray-200"
+            : "[&_.ql-editor]:!border [&_.ql-editor]:!border-gray-200 [&_.ql-editor]:!rounded-lg [&_.ql-editor]:!bg-white"
         }`}
       />
 

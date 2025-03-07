@@ -1,22 +1,19 @@
 import { useDynamicTextEditor } from "dynamic-text-editor";
 import { useState } from "react";
 
-const toolbar = [
-  ["bold", "italic"]
-]
+const toolbar = [["bold", "italic"]];
 
 const AsHook = () => {
   const [theme, setTheme] = useState<"snow" | "bubble">("snow");
   const [content, setContent] = useState("");
-
 
   const { quillRef } = useDynamicTextEditor({
     theme,
     toolbar,
     placeholder: "Start typing...",
     onChange: (value) => setContent(value),
-    onFocus: () => console.log("Editor focused"),
-    onBlur: () => console.log("Editor blurred"),
+    onFocus: () => console.log("Hook Editor focused"),
+    onBlur: () => console.log("Hook Editor blurred"),
   });
 
   return (
@@ -32,7 +29,12 @@ const AsHook = () => {
         </select>
       </div>
 
-      <div ref={quillRef} className="min-h-[200px] border border-gray-200 rounded-lg" />
+      <div
+        ref={quillRef}
+        className={`min-h-[200px] rounded-lg transition-all duration-200 ${
+          theme === "snow" ? "border border-gray-200" : "border-0 [&_.ql-editor]:!border [&_.ql-editor]:!border-gray-200 [&_.ql-editor]:!rounded-lg"
+        }`}
+      />
 
       <div className="mt-4">
         <h3 className="text-lg font-medium text-gray-700 mb-2">Preview</h3>
